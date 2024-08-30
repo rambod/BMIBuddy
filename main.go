@@ -5,6 +5,7 @@ import (
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
 	"fyne.io/fyne/v2/container"
+	"fyne.io/fyne/v2/theme"
 	"fyne.io/fyne/v2/widget"
 	"strconv"
 )
@@ -17,38 +18,49 @@ func calculateBMI(weightKg, heightM float64) (float64, string, string) {
 	switch {
 	case bmi < 18.5:
 		category = "Underweight"
-		tip = "Consider increasing your calorie intake with nutrient-rich foods and consult with a healthcare provider for a plan to reach a healthy weight."
+		tip = "Consider increasing your calorie intake with nutrient-rich foods \n and consult with a healthcare provider for a plan to reach a healthy weight."
 	case bmi >= 18.5 && bmi <= 24.9:
 		category = "Normal weight"
 		tip = "Maintain your healthy lifestyle with a balanced diet and regular physical activity."
 	case bmi >= 25 && bmi <= 29.9:
 		category = "Overweight"
-		tip = "Incorporate more physical activity into your routine and watch your portion sizes to manage your weight effectively."
+		tip = "Incorporate more physical activity into your \n routine and watch your portion sizes to manage your weight effectively."
 	case bmi >= 30 && bmi <= 34.9:
 		category = "Obesity (Class 1)"
-		tip = "Focus on a healthier diet and regular exercise. It’s advisable to consult with a healthcare provider for personalized advice."
+		tip = "Focus on a healthier diet and regular exercise.\n It’s advisable to consult with a healthcare provider for personalized advice."
 	case bmi >= 35 && bmi <= 39.9:
 		category = "Obesity (Class 2)"
-		tip = "Medical advice is recommended to develop a weight loss plan, as well as to monitor any related health conditions."
+		tip = "Medical advice is recommended to develop a weight loss plan,\n as well as to monitor any related health conditions."
 	default:
 		category = "Severe Obesity (Class 3)"
-		tip = "Seek professional medical assistance to address potential health risks and to develop a comprehensive weight management plan."
+		tip = "Seek professional medical assistance to address potential \n health risks and to develop a comprehensive weight management plan."
 	}
 
 	return bmi, category, tip
 }
 
 func main() {
+	app := app.New()
+	w := app.NewWindow("BMI Buddy")
+	w.SetFixedSize(true)
+	w.Resize(fyne.NewSize(700, 500))
+
 	weight := widget.NewEntry()
 	height := widget.NewEntry()
 	bmiText := widget.NewLabel("")
 	categoryText := widget.NewLabel("")
 	tipText := widget.NewLabel("")
 
-	app := app.New()
-	w := app.NewWindow("BMI Buddy")
-	w.SetFixedSize(true)
-	w.Resize(fyne.NewSize(700, 500))
+	themeStyle := widget.NewRadioGroup([]string{"Light", "Dark"}, func(value string) {
+		if value == "Light" {
+			app.Settings().SetTheme(theme.LightTheme())
+		} else {
+			app.Settings().SetTheme(theme.DarkTheme())
+		}
+	})
+
+	themeStyle.SetSelected("Light")
+
 	w.SetContent(container.NewVBox(
 		widget.NewLabel("Weight (kg):"),
 		weight,
@@ -82,6 +94,7 @@ func main() {
 		bmiText,
 		categoryText,
 		tipText,
+		themeStyle,
 	))
 	w.ShowAndRun()
 }
